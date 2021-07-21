@@ -2,7 +2,9 @@ import logging.config
 
 from fastapi import FastAPI, BackgroundTasks
 
-from app.celery_app import celery_app
+from celery.celery_app import celery_app
+
+# http://127.0.0.1:8000/docs
 
 # конфигурация логирования
 CELERYD_HIJACK_ROOT_LOGGER = False
