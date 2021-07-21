@@ -2,7 +2,7 @@ import logging.config
 
 from fastapi import FastAPI, BackgroundTasks
 
-from celery.celery_app import celery_app
+from app.celery.celery_app import celery_app
 
 # http://127.0.0.1:8000/docs
 
