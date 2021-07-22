@@ -3,12 +3,10 @@ from fastapi.responses import PlainTextResponse, HTMLResponse, FileResponse, JSO
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-import logging.config
 import random
-import uvicorn
 
 # from .celery.worker import celery_app
-from app.worker import logging_task
+from app.worker import log
 
 
 # класс  модели данных Pydantic
@@ -54,34 +52,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # экземпляр шаблона Jinja2 для возврата веб-страниц через шаблонизатор
 templates = Jinja2Templates(directory="templates")
-
-# настройка логирования:
-log_config = {
-    'version': 1,
-    'formatters': {
-        'basic': {
-            'format': '%(asctime)s - %(filename)s - %(funcName)s - %(levelname)s - %(message)s',
-            'datefmt': '%d-%b-%y %H:%M:%S'
-        }
-    },
-    'handlers': {
-        'file_handler': {
-            'class': 'logging.FileHandler',
-            'formatter': 'basic',
-            'filename': 'app.log',
-            'mode': 'w',
-        },
-    },
-    'loggers': {
-        '': {
-            'level': 'NOTSET',
-            'handlers': ['file_handler']
-        }
-    }
-}
-
-logging.config.dictConfig(log_config)
-log = logging.getLogger(__name__)
 
 
 # @app.post('/get_task')

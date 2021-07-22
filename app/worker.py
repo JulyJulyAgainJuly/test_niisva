@@ -1,5 +1,34 @@
 from celery import Celery
+import logging.config
 
+
+# настройка логирования:
+log_config = {
+    'version': 1,
+    'formatters': {
+        'basic': {
+            'format': '%(asctime)s - %(filename)s - %(funcName)s - %(levelname)s - %(message)s',
+            'datefmt': '%d-%b-%y %H:%M:%S'
+        }
+    },
+    'handlers': {
+        'file_handler': {
+            'class': 'logging.FileHandler',
+            'formatter': 'basic',
+            'filename': 'app.log',
+            'mode': 'w',
+        },
+    },
+    'loggers': {
+        '': {
+            'level': 'NOTSET',
+            'handlers': ['file_handler']
+        }
+    }
+}
+
+logging.config.dictConfig(log_config)
+log = logging.getLogger(__name__)
 
 celery_app = Celery(__name__)
 celery_app.config_from_object('celeryconfig')
