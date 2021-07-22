@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 # import random
 
-from app.celery_worker import log, logging_task, set_data
+from app.celery_worker import log, get_all, get_data, set_data, update_data, delete_data
 
 
 # класс  модели данных Pydantic
@@ -104,7 +104,7 @@ app = FastAPI(
 
 @app.get('/get_all_data', response_class=JSONResponse, tags=["get_all_data"])
 async def show_everything():
-    task = logging_task("app.celery_worker.logging_task")
+    task = get_all("app.celery_worker.get_all")
     log.warning('')
     print(task)
     return {"status": "200", "message": "OK"}
@@ -112,7 +112,7 @@ async def show_everything():
 
 @app.get('/get_data', response_class=JSONResponse, tags=["get_data"])
 async def show_data_for_key(key):
-    task = logging_task("app.celery_worker.logging_task")
+    task = get_data("app.celery_worker.get_data")
     log.warning('')
     print(task)
     return {"status": "200", "message": "OK"}
@@ -120,7 +120,7 @@ async def show_data_for_key(key):
 
 @app.get('/set_data', response_class=JSONResponse, tags=["set_data"])
 async def input_new_data(key, value):
-    task = logging_task("app.celery_worker.set_data", args=[key, value])
+    task = set_data("app.celery_worker.set_data", args=[key, value])
     log.warning('UPDATE')
     print(task)
     return {"status": "200", "message": "OK"}
@@ -128,7 +128,7 @@ async def input_new_data(key, value):
 
 @app.get('/update_data', response_class=JSONResponse, tags=["update_data"])
 async def update_data_for_key(key, value):
-    task = logging_task("app.celery_worker.test_celery", args=[key, value])
+    task = update_data("app.celery_worker.update_data", args=[key, value])
     log.warning('')
     print(task)
     return {"status": "200", "message": "OK"}
@@ -136,7 +136,7 @@ async def update_data_for_key(key, value):
 
 @app.get('/delete_data', response_class=JSONResponse, tags=["delete_data"])
 async def delete_data_for_key(key):
-    task = logging_task("app.celery_worker.test_celery", args=[key])
+    task = delete_data("app.celery_worker.delete_data", args=[key])
     log.warning('')
     print(task)
     return {"status": "200", "message": "OK"}

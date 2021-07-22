@@ -59,28 +59,31 @@ celery_app.config_from_object('celeryconfig')
 
 
 @celery_app.task
-def logging_task(self):
+def get_all(self):
+    log.warning('Get all data from DB')
     return self.request
 
 
 @celery_app.task
-def update(key, value):
-    log.warning('Update DB')
-    return {key: value}
+def get_data(self):
+    log.warning('Get data from DB for key')
+    return self.request
 
 
 @celery_app.task
 def set_data(key, value):
-    log.warning('Update DB')
+    log.warning('Set data to DB')
     return {key: value}
-#
-#
-# @celery_app.task
-# def logging_task(self):
-#     return self.request
-#
-#
-# @celery_app.task
-# def logging_task(self):
-#     # log.warning('Request: {0!r}'.format(self.request))
-#     return self.request
+
+
+@celery_app.task
+def update_data(key, value):
+    log.warning('Updating data in DB for key')
+    return {key: value}
+
+
+@celery_app.task
+def delete_data(self):
+    log.warning('Deleting data from DB for key')
+    # log.warning('Request: {0!r}'.format(self.request))
+    return self.request
