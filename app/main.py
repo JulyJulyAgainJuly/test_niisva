@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from app.celery_worker import log, get_all, get_data, set_data, update_data, delete_data
 
 
-# класс  модели данных Pydantic
+# класс модели данных Pydantic
 class Task(BaseModel):
     key: str
     value: str = None
@@ -17,24 +17,12 @@ class Task(BaseModel):
 # теги
 tags_metadata = [
     {
-        'name': 'get_all_data',
-        'description': 'Get all data from Redis DB.',
+        'name': 'get',
+        'description': 'Get data from Redis DB.',
     },
     {
-        'name': 'get_data',
-        'description': 'Get data from Redis DB for key.',
-    },
-    {
-        'name': 'set_data',
-        'description': 'Set data to Redis DB for key.',
-    },
-    {
-        'name': 'update_data',
-        'description': 'Update data to Redis DB for key.',
-    },
-    {
-        'name': 'delete_data',
-        'description': 'Delete data to Redis DB for key.',
+        'name': 'post',
+        'description': 'Put/Change/Delete data in Redis DB.',
     }
 ]
 
