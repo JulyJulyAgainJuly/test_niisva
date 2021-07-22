@@ -102,41 +102,70 @@ app = FastAPI(
 #                                       {"request": request, "message": "Hello, world"})
 
 
-@app.get('/get_all_data', response_class=JSONResponse, tags=["get_all_data"])
-async def show_everything():
-    task = get_all("app.celery_worker.get_all")
-    log.warning('')
+@app.get('/get_data', response_class=JSONResponse, tags=["get"])
+async def show_data_in_json(key=None):
+    if key:
+        task = get_data("app.celery_worker.get_data", args=[key])
+        log.warning('Get for key')
+    else:
+        task = get_all("app.celery_worker.get_all")
+        log.warning('Get all')
     print(task)
     return {"status": "200", "message": "OK"}
 
 
-@app.get('/get_data', response_class=JSONResponse, tags=["get_data"])
-async def show_data_for_key(key):
-    task = get_data("app.celery_worker.get_data")
-    log.warning('')
+@app.post('/post_data', response_class=JSONResponse, tags=["post"])
+async def set_data_to_db(key=None, value=None):
+    if key & value:
+        task = set_data("app.celery_worker.update_data", args=[value])
+        log.warning('Update existing data in DB')
+    elif not key & value:
+        task = set_data("app.celery_worker.set_data", args=[key, value])
+        log.warning('Set new data to DB')
+    elif not value & key:
+        task = set_data("app.celery_worker.delete_data", args=[key])
+        log.warning('Deleting existing data from DB')
+    else:
+        return {"message": "ERROR. Wrong parameters"}
     print(task)
     return {"status": "200", "message": "OK"}
 
 
-@app.get('/set_data', response_class=JSONResponse, tags=["set_data"])
-async def input_new_data(key, value):
-    task = set_data("app.celery_worker.set_data", args=[key, value])
-    log.warning('UPDATE')
-    print(task)
-    return {"status": "200", "message": "OK"}
-
-
-@app.get('/update_data', response_class=JSONResponse, tags=["update_data"])
-async def update_data_for_key(key, value):
-    task = update_data("app.celery_worker.update_data", args=[key, value])
-    log.warning('')
-    print(task)
-    return {"status": "200", "message": "OK"}
-
-
-@app.get('/delete_data', response_class=JSONResponse, tags=["delete_data"])
-async def delete_data_for_key(key):
-    task = delete_data("app.celery_worker.delete_data", args=[key])
-    log.warning('')
-    print(task)
-    return {"status": "200", "message": "OK"}
+# @app.get('/get_all_data', response_class=JSONResponse, tags=["get_all_data"])
+# async def show_everything():
+#     task = get_all("app.celery_worker.get_all")
+#     log.warning('')
+#     print(task)
+#     return {"status": "200", "message": "OK"}
+#
+#
+# @app.get('/get_data', response_class=JSONResponse, tags=["get_data"])
+# async def show_data_for_key(key):
+#     task = get_data("app.celery_worker.get_data")
+#     log.warning('')
+#     print(task)
+#     return {"status": "200", "message": "OK"}
+#
+#
+# @app.get('/set_data', response_class=JSONResponse, tags=["set_data"])
+# async def input_new_data(key, value):
+#     task = set_data("app.celery_worker.set_data", args=[key, value])
+#     log.warning('UPDATE')
+#     print(task)
+#     return {"status": "200", "message": "OK"}
+#
+#
+# @app.get('/update_data', response_class=JSONResponse, tags=["update_data"])
+# async def update_data_for_key(key, value):
+#     task = update_data("app.celery_worker.update_data", args=[key, value])
+#     log.warning('')
+#     print(task)
+#     return {"status": "200", "message": "OK"}
+#
+#
+# @app.get('/delete_data', response_class=JSONResponse, tags=["delete_data"])
+# async def delete_data_for_key(key):
+#     task = delete_data("app.celery_worker.delete_data", args=[key])
+#     log.warning('')
+#     print(task)
+#     return {"status": "200", "message": "OK"}
