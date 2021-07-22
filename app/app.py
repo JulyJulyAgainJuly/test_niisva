@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import PlainTextResponse, HTMLResponse, FileResponse
+from fastapi.responses import PlainTextResponse, HTMLResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -84,13 +84,13 @@ templates = Jinja2Templates(directory="templates")
 #     return "Hello World!"
 
 
-@app.get("/", response_class=HTMLResponse)
-async def hello(request: Request):
-    return templates.TemplateResponse("index.html",
-                                      {"request": request, "message": "Contact Us"})
+# @app.get("/", response_class=HTMLResponse)
+# async def hello(request: Request):
+#     return templates.TemplateResponse("index.html",
+#                                       {"request": request, "message": "Hello, world"})
 
 
-@app.get('/get-webpage', response_class=HTMLResponse)
+@app.get('/get_data', response_class=JSONResponse)
 async def get_webpage(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "message": "Contact Us"})
 
