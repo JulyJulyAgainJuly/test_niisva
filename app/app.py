@@ -7,10 +7,7 @@ import random
 import uvicorn
 
 # from .celery.worker import celery_app
-# from worker import logging_task
-
-
-# http://127.0.0.1:8000/docs
+from app.worker import logging_task
 
 
 # класс  модели данных Pydantic
@@ -19,17 +16,34 @@ class Task(BaseModel):
     value: str = None
 
 
+# теги
 tags_metadata = [
     {
-        'name': 'items',
-        'description': 'items',
+        'name': 'get_all_data',
+        'description': 'Get all data from Redis DB.',
+    },
+    {
+        'name': 'get_data',
+        'description': 'Get data from Redis DB for key.',
+    },
+    {
+        'name': 'set_data',
+        'description': 'Set data to Redis DB for key.',
+    },
+    {
+        'name': 'update_data',
+        'description': 'Update data to Redis DB for key.',
+    },
+    {
+        'name': 'delete_data',
+        'description': 'Delete data to Redis DB for key.',
     }
 ]
 
 # инициализация
 app = FastAPI(
-    title='Mini api',
-    description='This is my mini api (description)',
+    title='API',
+    description='API for Redis (+ Celery). Run "main.py".',
     version='1.0.0',
     openapi_tags=tags_metadata
 )
@@ -90,11 +104,36 @@ templates = Jinja2Templates(directory="templates")
 #                                       {"request": request, "message": "Hello, world"})
 
 
-@app.get('/get_data', response_class=JSONResponse)
-async def get_webpage(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "message": "Contact Us"})
+@app.get('/get_all_data', response_class=JSONResponse, tags=["get_all_data"])
+async def show_everything():
+    task = logging_task("app.celery_worker.logging_task")
+    print(task)
+    return {"status": "200", "message": "OK"}
 
 
-@app.get("/{item_id}")
-async def read_item(item_id: int):
-    return {"item_id": item_id}
+@app.get('/get_data', response_class=JSONResponse, tags=["get_data"])
+async def show_data_for_key(key):
+    task = logging_task("app.celery_worker.logging_task")
+    print(task)
+    return {"status": "200", "message": "OK"}
+
+
+@app.get('/set_data', response_class=JSONResponse, tags=["set_data"])
+async def input_new_data(value):
+    task = logging_task("app.celery_worker.test_celery", args=[value])
+    print(task)
+    return {"status": "200", "message": "OK"}
+
+
+@app.get('/update_data', response_class=JSONResponse, tags=["update_data"])
+async def update_data_for_key(key, value):
+    task = logging_task("app.celery_worker.test_celery", args=[key, value])
+    print(task)
+    return {"status": "200", "message": "OK"}
+
+
+@app.get('/delete_data', response_class=JSONResponse, tags=["delete_data"])
+async def delete_data_for_key(key):
+    task = logging_task("app.celery_worker.test_celery", args=[key])
+    print(task)
+    return {"status": "200", "message": "OK"}

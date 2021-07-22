@@ -2,11 +2,8 @@ from celery import Celery
 import logging.config
 
 
-celery_app = Celery(
-        __name__,
-        backend="redis://:wX4do7Xscne6KJFSD7Shu3xJx3Pn2MxC1JJaQVaVzpxePC@localhost:6379/1",
-        broker="redis://:wX4do7Xscne6KJFSD7Shu3xJx3Pn2MxC1JJaQVaVzpxePC@localhost:6379/0"
-    )
+celery_app = Celery(__name__)
+celery_app.config_from_object('celeryconfig')
 
 celery_app.conf.task_routes = {
     "app.celery.tasks.logging_task": "test-queue"
@@ -58,3 +55,29 @@ log = logging.getLogger(__name__)
 @celery_app.task
 def logging_task(self):
     log.warning('Request: {0!r}'.format(self.request))
+    return self.request
+
+
+@celery_app.task
+def logging_task(self):
+    log.warning('Request: {0!r}'.format(self.request))
+    return self.request
+
+
+@celery_app.task
+def update(key, value):
+    log.warning('DB update')
+
+    return self.request
+
+
+@celery_app.task
+def logging_task(self):
+    log.warning('Request: {0!r}'.format(self.request))
+    return self.request
+
+
+@celery_app.task
+def logging_task(self):
+    log.warning('Request: {0!r}'.format(self.request))
+    return self.request
