@@ -35,7 +35,7 @@ app = FastAPI(
 )
 
 # монтирование статической папки для обслуживания статических файлов
-# app.mount("/templates", StaticFiles(directory="templates"), name="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # экземпляр шаблона Jinja2 для возврата веб-страниц через шаблонизатор
 templates = Jinja2Templates(directory="templates")
