@@ -1,9 +1,5 @@
+from celery import Celery
 import logging.config
-
-from app.worker import celery_app
-
-# конфигурация логирования
-CELERYD_HIJACK_ROOT_LOGGER = False
 
 log_config = {
     'version': 1,
@@ -33,17 +29,21 @@ logging.config.dictConfig(log_config)
 log = logging.getLogger(__name__)
 
 
+celery_app = Celery(
+        __name__,
+        backend="redis://:wX4do7Xscne6KJFSD7Shu3xJx3Pn2MxC1JJaQVaVzpxePC@localhost:6379/1",
+        broker="redis://:wX4do7Xscne6KJFSD7Shu3xJx3Pn2MxC1JJaQVaVzpxePC@localhost:6379/0"
+    )
+
+
 @celery_app.task
 def add(x, y):
     res = x + y
     log.warning("Adding %s + %s, res: %s" % (x, y, res))
     return res
 
-
-# @celery_app.task(ask_test=True)
-# def test_celery(word: str) -> str:
-#     for i in range(1, 11):
-#         sleep(1)
-#         current_task.update_state(state='PROGRESS',
-#                                   meta={'process_percent': i*10})
-#     return f"test task return {word}"
+# celery_app.conf.task_routes = {
+#     "app.celery_worker.test_celery": "test-queue"
+# }
+#
+# celery_app.conf.update(task_track_started=True)
