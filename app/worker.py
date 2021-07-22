@@ -30,6 +30,7 @@ log_config = {
 logging.config.dictConfig(log_config)
 log = logging.getLogger(__name__)
 
+# настройка Celery:
 celery_app = Celery(__name__)
 celery_app.config_from_object('celeryconfig')
 
@@ -52,9 +53,9 @@ celery_app.config_from_object('celeryconfig')
 #     return value
 
 
-@celery_app.task
-def logging_task(self):
-    return self.request
+# @celery_app.task
+# def logging_task():
+#     return {"message": "OK"}
 
 
 @celery_app.task
@@ -64,16 +65,22 @@ def logging_task(self):
 
 @celery_app.task
 def update(key, value):
-
-    return 200
-
-
-@celery_app.task
-def logging_task(self):
-    return self.request
+    log.warning('Update DB')
+    return {key: value}
 
 
 @celery_app.task
-def logging_task(self):
-    # log.warning('Request: {0!r}'.format(self.request))
-    return self.request
+def set_data(key, value):
+    log.warning('Update DB')
+    return {key: value}
+#
+#
+# @celery_app.task
+# def logging_task(self):
+#     return self.request
+#
+#
+# @celery_app.task
+# def logging_task(self):
+#     # log.warning('Request: {0!r}'.format(self.request))
+#     return self.request

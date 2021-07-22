@@ -6,8 +6,7 @@ Python 3.8.10
 В одном терминале запускаем сервер Редис:
     redis-server PycharmProjects/test_niisva/redis.conf
 Во втором терминале (с виртуальной средой Python) запускаем celery (из корня, где "manage.py"):
-    celery -A worker app.worker.celery_app --loglevel=info
-    celery -A --app=app.worker:celery_app worker --loglevel=info
+    celery -A worker worker --loglevel=INFO
 В третьем терминале запускаем manage.py:
     python manage.py
 

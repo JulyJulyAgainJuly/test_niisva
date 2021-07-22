@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 # import random
 
-from app.worker import log, logging_task
+from app.worker import log, logging_task, set_data
 
 
 # класс  модели данных Pydantic
@@ -47,10 +47,10 @@ app = FastAPI(
 )
 
 # монтирование статической папки для обслуживания статических файлов
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # экземпляр шаблона Jinja2 для возврата веб-страниц через шаблонизатор
-templates = Jinja2Templates(directory="templates")
+# templates = Jinja2Templates(directory="templates")
 
 
 # @app.post('/get_task')
@@ -119,9 +119,9 @@ async def show_data_for_key(key):
 
 
 @app.get('/set_data', response_class=JSONResponse, tags=["set_data"])
-async def input_new_data(value):
-    task = logging_task("app.celery_worker.test_celery", args=[value])
-    log.warning('')
+async def input_new_data(key, value):
+    task = logging_task("app.celery_worker.set_data", args=[key, value])
+    log.warning('UPDATE')
     print(task)
     return {"status": "200", "message": "OK"}
 
