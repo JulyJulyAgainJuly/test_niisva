@@ -1,10 +1,11 @@
-password = 'wX4do7Xscne6KJFSD7Shu3xJx3Pn2MxC1JJaQVaVzpxePC'
+_password = 'wX4do7Xscne6KJFSD7Shu3xJx3Pn2MxC1JJaQVaVzpxePC'
+_url = 'localhost:6379'
 
-broker_url = f'redis://:{password}@localhost:6379/0'
-result_backend = f'redis://:{password}@localhost:6379/1'
+broker_url = f'redis://:{_password}@{_url}/0'
+result_backend = f'redis://:{_password}@{_url}/1'
 
 task_serializer = 'json'
 result_serializer = 'json'
 accept_content = ['json']
-timezone = 'Europe/Oslo'
+timezone = 'MSK'
 enable_utc = True
