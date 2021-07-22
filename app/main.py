@@ -3,10 +3,9 @@ from fastapi.responses import PlainTextResponse, HTMLResponse, FileResponse, JSO
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-import random
+# import random
 
-# from .celery.worker import celery_app
-from app.worker import log
+from app.worker import log, logging_task
 
 
 # класс  модели данных Pydantic
@@ -106,6 +105,7 @@ templates = Jinja2Templates(directory="templates")
 @app.get('/get_all_data', response_class=JSONResponse, tags=["get_all_data"])
 async def show_everything():
     task = logging_task("app.celery_worker.logging_task")
+    log.warning('')
     print(task)
     return {"status": "200", "message": "OK"}
 
@@ -113,6 +113,7 @@ async def show_everything():
 @app.get('/get_data', response_class=JSONResponse, tags=["get_data"])
 async def show_data_for_key(key):
     task = logging_task("app.celery_worker.logging_task")
+    log.warning('')
     print(task)
     return {"status": "200", "message": "OK"}
 
@@ -120,6 +121,7 @@ async def show_data_for_key(key):
 @app.get('/set_data', response_class=JSONResponse, tags=["set_data"])
 async def input_new_data(value):
     task = logging_task("app.celery_worker.test_celery", args=[value])
+    log.warning('')
     print(task)
     return {"status": "200", "message": "OK"}
 
@@ -127,6 +129,7 @@ async def input_new_data(value):
 @app.get('/update_data', response_class=JSONResponse, tags=["update_data"])
 async def update_data_for_key(key, value):
     task = logging_task("app.celery_worker.test_celery", args=[key, value])
+    log.warning('')
     print(task)
     return {"status": "200", "message": "OK"}
 
@@ -134,5 +137,6 @@ async def update_data_for_key(key, value):
 @app.get('/delete_data', response_class=JSONResponse, tags=["delete_data"])
 async def delete_data_for_key(key):
     task = logging_task("app.celery_worker.test_celery", args=[key])
+    log.warning('')
     print(task)
     return {"status": "200", "message": "OK"}
