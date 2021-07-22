@@ -3,7 +3,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from app.celery.worker import send_data
+# from .celery.worker import celery_app
+from .celery.tasks import logging_task
 
 # http://127.0.0.1:8000/docs
 
@@ -47,8 +48,8 @@ app = FastAPI()
 
 
 @app.post('/get_task')
-def send_task(value: str):
-    send_data.delay(value)
+def send_task():
+    logging_task.delay()
     # req = request.json()
     # try:
     #     int(req["n1"])

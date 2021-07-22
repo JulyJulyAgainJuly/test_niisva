@@ -1,6 +1,7 @@
 from .worker import celery_app
 import logging.config
 
+# настройка логирования:
 log_config = {
     'version': 1,
     'formatters': {
@@ -29,19 +30,18 @@ logging.config.dictConfig(log_config)
 log = logging.getLogger(__name__)
 
 
-@celery_app.task
-def send_data(value):
-    log.warning("Adding %s" % value)
-    return value
-
-
-@celery_app.task
-def get_data(value):
-    log.warning("Getting %s" % value)
-    return value
-
-# celery_app.conf.task_routes = {
-#     "app.celery_worker.test_celery": "test-queue"
-# }
+# @celery_app.task
+# def send_data(value):
+#     log.warning("Adding %s" % value)
+#     return value
 #
-# celery_app.conf.update(task_track_started=True)
+#
+# @celery_app.task
+# def get_data(value):
+#     log.warning("Getting %s" % value)
+#     return value
+
+
+@celery_app.task
+def logging_task(self):
+    log.warning('Request: {0!r}'.format(self.request))
