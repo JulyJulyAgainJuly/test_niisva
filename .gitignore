@@ -1,3 +1,3 @@
 # Project exclude paths
 /venv/
-/app/app.log
+/app.log
