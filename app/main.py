@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 # import random
 
-from app.worker import log, logging_task, set_data
+from app.celery_worker import log, logging_task, set_data
 
 
 # класс  модели данных Pydantic
