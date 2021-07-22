@@ -3,6 +3,7 @@ from fastapi.responses import PlainTextResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+import json
 # import random
 
 from app.celery_worker import log, get_all, get_data, set_data, update_data, delete_data
@@ -99,7 +100,7 @@ async def show_data_in_json(key=None):
         task = get_all("app.celery_worker.get_all")
         log.warning('Get all')
     print(task)
-    return {"status": "200", "message": "OK"}
+    return json.dumps({"status": "200", "message": "OK"})
 
 
 @app.post('/post_data', response_class=JSONResponse, tags=["post"])
@@ -117,7 +118,7 @@ async def set_data_to_db(key=None, value=None):
         log.error('WRONG PARAMETERS')
         return {"message": "ERROR. Wrong parameters"}
     print(task)
-    return {"status": "200", "message": "OK"}
+    return json.dumps({"status": "200", "message": "OK"})
 
 
 # @app.get('/get_all_data', response_class=JSONResponse, tags=["get_all_data"])
