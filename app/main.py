@@ -1,8 +1,9 @@
 # import logging.config
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
+from pydantic import BaseModel
 
-from celery.celery_worker import add
+from worker import add
 
 # http://127.0.0.1:8000/docs
 
@@ -36,13 +37,25 @@ from celery.celery_worker import add
 # logging.config.dictConfig(log_config)
 # log = logging.getLogger(__name__)
 
+
+class Task(BaseModel):
+    name: str
+    description: str = None
+
+
 app = FastAPI()
 
 
-@app.post('/add')
-def enqueue_add(n1: int, n2: int):
-    # We use celery delay method in order to enqueue the task with the given parameters
-    add.delay(n1, n2)
+@app.post('/get_task')
+def get_task(task: Task):
+    return task
+    # req = request.json()
+    # try:
+    #     int(req["n1"])
+    # except TypeError:
+    #     return {"status": 1, "message": Wrong type}
+    # # We use celery delay method in order to enqueue the task with the given parameters
+    # add.delay(n1, n2)
 
 # def celery_on_message(body):
 #     log.warning(body)
