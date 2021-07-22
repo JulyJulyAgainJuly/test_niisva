@@ -85,9 +85,9 @@ templates = Jinja2Templates(directory="templates")
 
 
 @app.get("/", response_class=HTMLResponse)
-async def hello(request: Request):
+async def hello():
     return templates.TemplateResponse("index.html",
-                                      {"request": request, "message": "Contact Us"})
+                                      {"request": "request", "message": "Contact Us"})
 
 
 @app.get('/get-webpage', response_class=HTMLResponse)
