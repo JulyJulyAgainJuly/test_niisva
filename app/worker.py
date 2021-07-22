@@ -11,8 +11,6 @@ celery_app.config_from_object('celeryconfig')
 # celery_app.conf.update(task_track_started=True)
 
 
-
-
 # @celery_app.task
 # def send_data(value):
 #     log.warning("Adding %s" % value)
@@ -27,30 +25,26 @@ celery_app.config_from_object('celeryconfig')
 
 @celery_app.task
 def logging_task(self):
-    log.warning('Request: {0!r}'.format(self.request))
     return self.request
 
 
 @celery_app.task
 def logging_task(self):
-    log.warning('Request: {0!r}'.format(self.request))
     return self.request
 
 
 @celery_app.task
 def update(key, value):
-    log.warning('DB update')
 
+    return 200
+
+
+@celery_app.task
+def logging_task(self):
     return self.request
 
 
 @celery_app.task
 def logging_task(self):
-    log.warning('Request: {0!r}'.format(self.request))
-    return self.request
-
-
-@celery_app.task
-def logging_task(self):
-    log.warning('Request: {0!r}'.format(self.request))
+    # log.warning('Request: {0!r}'.format(self.request))
     return self.request
