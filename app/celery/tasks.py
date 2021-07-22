@@ -1,4 +1,4 @@
-from celery import Celery
+from .worker import celery_app
 import logging.config
 
 log_config = {
@@ -29,18 +29,16 @@ logging.config.dictConfig(log_config)
 log = logging.getLogger(__name__)
 
 
-celery_app = Celery(
-        __name__,
-        backend="redis://:wX4do7Xscne6KJFSD7Shu3xJx3Pn2MxC1JJaQVaVzpxePC@localhost:6379/1",
-        broker="redis://:wX4do7Xscne6KJFSD7Shu3xJx3Pn2MxC1JJaQVaVzpxePC@localhost:6379/0"
-    )
+@celery_app.task
+def send_data(value):
+    log.warning("Adding %s" % value)
+    return value
 
 
 @celery_app.task
-def add(x, y):
-    res = x + y
-    log.warning("Adding %s + %s, res: %s" % (x, y, res))
-    return res
+def get_data(value):
+    log.warning("Getting %s" % value)
+    return value
 
 # celery_app.conf.task_routes = {
 #     "app.celery_worker.test_celery": "test-queue"
