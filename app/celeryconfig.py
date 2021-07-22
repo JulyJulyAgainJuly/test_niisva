@@ -6,6 +6,7 @@ result_backend = f'redis://:{_password}@{_url}/1'
 
 task_serializer = 'json'
 result_serializer = 'json'
-accept_content = ['json']
+accept_content = ['application/json']
 timezone = 'MSK'
 enable_utc = True
+# task_annotations =

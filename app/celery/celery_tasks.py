@@ -1,4 +1,4 @@
-from app.main import celery_app
+# from app.main import celery_app
 import logging.config
 
 # настройка логирования:
