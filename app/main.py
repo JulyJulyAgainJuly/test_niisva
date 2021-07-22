@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import PlainTextResponse, HTMLResponse, FileResponse, JSONResponse
+from fastapi.responses import PlainTextResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -90,7 +90,7 @@ app = FastAPI(
 #                                       {"request": request, "message": "Hello, world"})
 
 
-@app.get('/get_data', response_class=JSONResponse, tags=["get"])
+@app.get('/get_data/{key}', response_class=JSONResponse, tags=["get"])
 async def show_data_in_json(key=None):
     if key:
         task = get_data("app.celery_worker.get_data", args=[key])
@@ -114,6 +114,7 @@ async def set_data_to_db(key=None, value=None):
         task = set_data("app.celery_worker.delete_data", args=[key])
         log.warning('Deleting existing data from DB')
     else:
+        log.error('WRONG PARAMETERS')
         return {"message": "ERROR. Wrong parameters"}
     print(task)
     return {"status": "200", "message": "OK"}
