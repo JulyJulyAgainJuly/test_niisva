@@ -1,42 +1,10 @@
-# import logging.config
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 # from .celery.worker import celery_app
-from worker import logging_task
+from app.worker import logging_task
 
 # http://127.0.0.1:8000/docs
-
-# конфигурация логирования
-# CELERYD_HIJACK_ROOT_LOGGER = False
-#
-# log_config = {
-#     'version': 1,
-#     'formatters': {
-#         'basic': {
-#             'format': '%(asctime)s - %(filename)s - %(funcName)s - %(levelname)s - %(message)s',
-#             'datefmt': '%d-%b-%y %H:%M:%S'
-#         }
-#     },
-#     'handlers': {
-#         'file_handler': {
-#             'class': 'logging.FileHandler',
-#             'formatter': 'basic',
-#             'filename': 'app.log',
-#             'mode': 'w',
-#         },
-#     },
-#     'loggers': {
-#         '': {
-#             'level': 'NOTSET',
-#             'handlers': ['file_handler']
-#         }
-#     }
-# }
-#
-# logging.config.dictConfig(log_config)
-# log = logging.getLogger(__name__)
 
 
 class Task(BaseModel):
@@ -83,3 +51,13 @@ def send_task():
 # @app.post("/post")
 # async def post():
 #     pass
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+
+@app.get("/{item_id}")
+async def read_item(item_id: int):
+    return {"item_id": item_id}
