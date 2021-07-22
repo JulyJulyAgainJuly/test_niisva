@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 # from .celery.worker import celery_app
-from .celery.tasks import logging_task
+from worker import logging_task
 
 # http://127.0.0.1:8000/docs
 

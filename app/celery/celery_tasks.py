@@ -1,4 +1,4 @@
-from .worker import celery_app
+from app.worker import celery_app
 import logging.config
 
 # настройка логирования:
