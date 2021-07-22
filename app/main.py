@@ -43,7 +43,7 @@ tags_metadata = [
 # инициализация
 app = FastAPI(
     title='API',
-    description='API for Redis (+ Celery). Run "manage.py".',
+    description='API for Redis (+ Celery).\n1. Run redis-server.\n2. Run celery.\n3. Run "manage.py".',
     version='1.0.0',
     openapi_tags=tags_metadata
 )
