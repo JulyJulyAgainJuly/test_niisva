@@ -1,10 +1,11 @@
-from fastapi import FastAPI, Form, Request
-from fastapi.responses import PlainTextResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI\
+    # , Form, Request
+from fastapi.responses import JSONResponse\
+    # , PlainTextResponse
+# from fastapi.staticfiles import StaticFiles
+# from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 import json
-# import random
 
 from app.celery_worker import log, get_all, get_data, set_data, update_data, delete_data
 
@@ -106,13 +107,13 @@ async def show_data_in_json(key=None):
 @app.post('/post_data', response_class=JSONResponse, tags=["post"])
 async def set_data_to_db(key=None, value=None):
     if key & value:
-        task = set_data("app.celery_worker.update_data", args=[value])
+        task = update_data("app.celery_worker.update_data", args=[value])
         log.warning('Update existing data in DB')
     elif not key & value:
         task = set_data("app.celery_worker.set_data", args=[key, value])
         log.warning('Set new data to DB')
     elif not value & key:
-        task = set_data("app.celery_worker.delete_data", args=[key])
+        task = delete_data("app.celery_worker.delete_data", args=[key])
         log.warning('Deleting existing data from DB')
     else:
         log.error('WRONG PARAMETERS')
