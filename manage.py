@@ -1,5 +1,4 @@
 import uvicorn
-from app.celery_worker import celery_app
 
 """
 Задание: реализовать API-сервер для работы с хранилищем Redis (и брокер, и бэк), используя Celery.
