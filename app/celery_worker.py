@@ -87,3 +87,7 @@ def delete_data(self):
     log.warning('Deleting data from DB for key')
     # log.warning('Request: {0!r}'.format(self.request))
     return self.request
+
+
+if __name__ == '__main__':
+    celery_app.start(['worker'])

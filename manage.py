@@ -1,4 +1,5 @@
 import uvicorn
+from app.celery_worker import celery_app
 
 """
 Задание: реализовать API-сервер для работы с хранилищем Redis (и брокер, и бэк), используя Celery.
@@ -6,9 +7,9 @@ import uvicorn
 Python 3.8.10
 
 В одном терминале запускаем сервер Редис:
-    redis-server PycharmProjects/test_niisva/redis.conf
-Во втором терминале (с виртуальной средой Python) запускаем celery (из корня, где "manage.py"):
-    celery -A celery_worker worker --loglevel=INFO
+    redis-server test_niisva/redis.conf
+Во втором терминале запускаем celery:
+    python app/celery_worker.py
 В третьем терминале запускаем manage.py:
     python manage.py
 
