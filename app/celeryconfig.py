@@ -10,3 +10,6 @@ accept_content = ['application/json']
 timezone = 'MSK'
 enable_utc = True
 # task_annotations =
+task_routes = {
+    'task.add'
+}

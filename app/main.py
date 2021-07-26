@@ -1,3 +1,4 @@
+from celery.result import AsyncResult
 from fastapi import FastAPI
 # , Form, Request
 from fastapi.responses import JSONResponse
@@ -7,7 +8,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import json
 
-from app.celery_worker import log, get_all, get_data, set_data, update_data, delete_data
+from app.celery_worker import log, get_task, add_task, update_task, delete_task
 
 
 # класс модели данных Pydantic
@@ -31,7 +32,7 @@ tags_metadata = [
 # инициализация
 app = FastAPI(
     title='API',
-    description='API for Redis (+ Celery).\n1. Run redis-server.\n2. Run celery.\n3. Run "manage.py".',
+    description='API for Redis (+ Celery).\n1. Run redis-server.\n2. Run "celery_worker.py".\n3. Run "manage.py".',
     version='1.0.0',
     openapi_tags=tags_metadata
 )
@@ -92,34 +93,45 @@ app = FastAPI(
 #                                       {"request": request, "message": "Hello, world"})
 
 
-@app.get('/get_data/{key}', response_class=JSONResponse, tags=["get"])
-async def show_data_in_json(key=None):
-    if key:
-        task = get_data("app.celery_worker.get_data", args=[key])
-        log.warning('Get for key')
-    else:
-        task = get_all("app.celery_worker.get_all")
-        log.warning('Get all')
-    print(task)
-    return json.dumps({"status": "200", "message": "OK"})
+@app.get("/tasks/{task_id}")
+def get_status(task_id):
+    task_result = AsyncResult(task_id)
+    result = {
+        "task_id": task_id,
+        "task_status": task_result.status,
+        "task_result": task_result.result
+    }
+    return JSONResponse(result)
 
 
-@app.post('/post_data', response_class=JSONResponse, tags=["post"])
-async def set_data_to_db(key=None, value=None):
-    if key & value:
-        task = update_data("app.celery_worker.update_data", args=[value])
-        log.warning('Update existing data in DB')
-    elif not key & value:
-        task = set_data("app.celery_worker.set_data", args=[key, value])
-        log.warning('Set new data to DB')
-    elif not value & key:
-        task = delete_data("app.celery_worker.delete_data", args=[key])
-        log.warning('Deleting existing data from DB')
-    else:
-        log.error('WRONG PARAMETERS')
-        return {"message": "ERROR. Wrong parameters"}
-    print(task)
-    return json.dumps({"status": "200", "message": "OK"})
+# @app.get('/get_data/{key}', response_class=JSONResponse, tags=["get"])
+# async def show_data_in_json(key=None):
+#     if key:
+#         task = get_data("app.celery_worker.get_data", args=[key])
+#         log.warning('Get for key')
+#     else:
+#         task = get_all("app.celery_worker.get_all")
+#         log.warning('Get all')
+#     print(task)
+#     return json.dumps({"status": "200", "message": "OK"})
+#
+#
+# @app.post('/post_data', response_class=JSONResponse, tags=["post"])
+# async def set_data_to_db(key=None, value=None):
+#     if key & value:
+#         task = update_data("app.celery_worker.update_data", args=[value])
+#         log.warning('Update existing data in DB')
+#     elif not key & value:
+#         task = set_data("app.celery_worker.set_data", args=[key, value])
+#         log.warning('Set new data to DB')
+#     elif not value & key:
+#         task = delete_data("app.celery_worker.delete_data", args=[key])
+#         log.warning('Deleting existing data from DB')
+#     else:
+#         log.error('WRONG PARAMETERS')
+#         return {"message": "ERROR. Wrong parameters"}
+#     print(task)
+#     return json.dumps({"status": "200", "message": "OK"})
 
 
 # @app.get('/get_all_data', response_class=JSONResponse, tags=["get_all_data"])
