@@ -61,8 +61,8 @@ app = FastAPI(
 #
 # def background_on_message(task):
 #     log.warning(task.get(on_message=celery_on_message, propagate=False))
-#
-#
+
+
 @app.get("/get/{key}")
 async def get(key):
     """
@@ -72,9 +72,12 @@ async def get(key):
     """
     task = task_get.delay(key)
     res = task.get()
-    log.warning('main.get RUN')
-    print(res)
-    return res
+    if res:
+        log.warning('main.get RUN')
+        print(res)
+        return res
+    else:
+        return {'msg': 'NO VALUE'}
 
 
 # @app.post("/post")

@@ -1,5 +1,5 @@
 from celery import Celery
-import logging.config
+import logging
 import redis
 import json
 
@@ -11,7 +11,9 @@ _port = '6379'
 
 broker_url = f'redis://:{_password}@{_host}:{_port}/1'
 result_backend = f'redis://:{_password}@{_host}:{_port}/0'
+
 celery_app = Celery('app', broker=broker_url, backend=result_backend)
+
 r = redis.Redis(db=0, host=_host, port=_port, password=_password)
 
 
@@ -19,9 +21,14 @@ r = redis.Redis(db=0, host=_host, port=_port, password=_password)
 def task_get(key):
     assert type(key) == bytes or type(key) == str or type(key) == int or type(key) == float, 'WRONG KEY TYPE'
     log.warning('task.task_get RUN')
-    val = json.loads(r.get(key))
-    # print(val)
-    return json.dumps({key: val})
+    val = r.get(key)
+    if val:
+        val = json.loads(val)
+        # print(val)
+        return json.dumps({key: val})
+    else:
+        log.error(f'task.task_get THERE IS NO VALUE WITH KEY = {key}')
+        return False
 
 
 @celery_app.task(name="task_set")
