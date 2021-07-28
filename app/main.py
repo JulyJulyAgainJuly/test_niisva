@@ -18,7 +18,7 @@ tags_metadata = [
         'description': 'Изменить запись в базе',
     },
     {
-        'name': 'get',
+        'name': 'delete',
         'description': 'Удалить запись из базы',
     }
 ]
@@ -32,7 +32,7 @@ app = FastAPI(
 )
 
 
-@app.get("/add")
+@app.get("/add", tags=["add"])
 async def add(key, value):
     """
     Get.
@@ -48,7 +48,7 @@ async def add(key, value):
     return {'msg': 'SOMETHING WRONG WITH task_set'}
 
 
-@app.get("/get")
+@app.get("/get", tags=["get"])
 async def get(key):
     """
     Get.
@@ -63,7 +63,7 @@ async def get(key):
     return {'msg': 'SOMETHING WRONG WITH task_get'}
 
 
-@app.get("/update")
+@app.get("/update", tags=["update"])
 async def update(key, value):
     """
     Get.
@@ -82,7 +82,7 @@ async def update(key, value):
     return {'msg': f'main.update THERE IS NO VALUE WITH KEY = {key}'}
 
 
-@app.get("/delete")
+@app.get("/delete", tags=["delete"])
 async def delete(key):
     """
     Get.

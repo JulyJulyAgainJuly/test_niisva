@@ -20,8 +20,9 @@ r = redis.Redis(db=0, host=_host, port=_port, password=_password)
 def task_get(key):
     assert type(key) == bytes or type(key) == str or type(key) == int or type(key) == float, 'WRONG KEY TYPE'
     log.warning('task.task_get RUN')
-    val = r.get(key).decode("utf-8")
+    val = r.get(key)
     if val:
+        val = val.decode("utf-8")
         return {key: val}
     else:
         log.error(f'task.task_get THERE IS NO VALUE WITH KEY = {key}')
