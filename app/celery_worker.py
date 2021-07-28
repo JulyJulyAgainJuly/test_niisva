@@ -21,6 +21,7 @@ r = redis.Redis(db=0, host=_host, port=_port, password=_password)
 def task_get(key):
     assert type(key) == bytes or type(key) == str or type(key) == int or type(key) == float, 'WRONG KEY TYPE'
     log.warning('task.task_get RUN')
+    print(f'key={key}')
     val = r.get(key)
     if val:
         val = json.loads(val)
@@ -35,8 +36,14 @@ def task_get(key):
 def task_set(key, value):
     assert type(key) == bytes or type(key) == str or type(key) == int or type(key) == float, 'WRONG KEY TYPE'
     log.warning('task.task_set RUN')
-    r.set(key, json.dumps(value))
-    return json.dumps({key: value})
+    r.set(key, value)
+    val = r.get(key)
+    if val:
+        val = json.loads(val)
+        return json.dumps({key: value})
+    else:
+        log.error(f'task.task_set SOMETHING WENT WRONG')
+        return False
 
 
 @celery_app.task(name="task_delete")

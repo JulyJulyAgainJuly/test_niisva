@@ -63,19 +63,38 @@ app = FastAPI(
 #     log.warning(task.get(on_message=celery_on_message, propagate=False))
 
 
-@app.get("/get/{key}")
+@app.get("/add")
+async def add(key, value):
+    """
+    Get.
+    :param key:
+    :return:
+    """
+    print(f'key={key}')
+    print(f'value={value}')
+    task = task_set.delay(key=key, value=value)
+    res = task.get()
+    if res:
+        log.warning('main.add RUN')
+        # print(res)
+        return res
+    else:
+        return {'msg': 'SOMETHING WENT WRONG'}
+
+
+@app.get("/get")
 async def get(key):
     """
     Get.
     :param key:
     :return:
     """
-    task = task_get.delay(key)
+    task = task_get.delay(key=key)
     res = task.get()
     if res:
         log.warning('main.get RUN')
-        print(res)
-        return res
+        # print(res)
+        return json.dumps({key: json.loads(res)})
     else:
         return {'msg': 'NO VALUE'}
 
