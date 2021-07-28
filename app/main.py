@@ -19,7 +19,7 @@ tags_metadata = [
     },
     {
         'name': 'get',
-        'description': 'Получить запись из базы',
+        'description': 'Удалить запись из базы',
     }
 ]
 
