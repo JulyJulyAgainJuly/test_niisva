@@ -1,6 +1,8 @@
 from celery import Celery
 import logging.config
+import redis
 
+CELERYD_HIJACK_ROOT_LOGGER = False
 
 # настройка логирования:
 log_config = {
@@ -31,20 +33,23 @@ logging.config.dictConfig(log_config)
 log = logging.getLogger(__name__)
 
 # настройка Celery:
-celery_app = Celery('app')
-celery_app.config_from_object('celeryconfig')
+# celery_app = Celery('app')
+# celery_app.config_from_object('celeryconfig')
 
-# celery_app.conf.task_routes = {
-#     "app.celery.tasks.logging_task": "test-queue"
-# }
-#
-# celery_app.conf.update(task_track_started=True)
+_password = 'wX4do7Xscne6KJFSD7Shu3xJx3Pn2MxC1JJaQVaVzpxePC'
+_url = 'localhost:6379'
+
+broker_url = f'redis://:{_password}@{_url}/1'
+result_backend = f'redis://:{_password}@{_url}/0'
+celery_app = Celery('app', broker=broker_url, backend=result_backend)
+r = redis.Redis(db=0, password=_password)
 
 
 @celery_app.task
-def get_task(self):
+def get_task(key):
     log.warning('Get data from DB for key')
-    return self.request
+    r.get(key)
+    return True
 
 
 @celery_app.task(name="add_task")

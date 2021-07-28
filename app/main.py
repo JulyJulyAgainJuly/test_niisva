@@ -1,4 +1,4 @@
-from celery.result import AsyncResult
+from celery_f.result import AsyncResult
 from fastapi import FastAPI
 # , Form, Request
 from fastapi.responses import JSONResponse
@@ -52,7 +52,7 @@ app = FastAPI(
 #     int(req["n1"])
 # except TypeError:
 #     return {"status": 1, "message": Wrong type}
-# # We use celery delay method in order to enqueue the task with the given parameters
+# # We use celery_f delay method in order to enqueue the task with the given parameters
 # add.delay(n1, n2)
 
 # def celery_on_message(body):
