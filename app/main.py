@@ -28,12 +28,12 @@ app = FastAPI(
     description='API for Redis (+ Celery).'
                 '\n1. Run redis-server.'
                 '\n2. Run "celery_worker.py".'
-                '\n3. Run "manage.py".'
-                '\nПримеры использования:'
-                '\nhttp://127.0.0.1:8080/add?key=KEY1&value=SOME_VALUE - добавление записи.'
-                '\nhttp://127.0.0.1:8080/get?key=KEY1 - вывод записи.'
-                '\nhttp://127.0.0.1:8080/update?key=KEY1&value=SOME_NEW_VALUE - изменение записи.'
-                '\nhttp://127.0.0.1:8080/delete?key=KEY1 - удаление записи.',
+                '\n3. Run "manage.py".\n'
+                '\nExamples:\n'
+                '\nhttp://127.0.0.1:8080/add?key=KEY1&value=SOME_VALUE - добавление записи.\n'
+                '\nhttp://127.0.0.1:8080/get?key=KEY1 - вывод записи.\n'
+                '\nhttp://127.0.0.1:8080/update?key=KEY1&value=SOME_NEW_VALUE - изменение записи.\n'
+                '\nhttp://127.0.0.1:8080/delete?key=KEY1 - удаление записи.\n',
     version='1.0.0',
     openapi_tags=tags_metadata
 )
