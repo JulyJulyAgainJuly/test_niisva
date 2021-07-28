@@ -5,16 +5,16 @@ from fastapi.responses import JSONResponse
 # , PlainTextResponse
 # from fastapi.staticfiles import StaticFiles
 # from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
+# from pydantic import BaseModel
 import json
 
-from app.celery_worker import log, get_task, add_task, update_task, delete_task
+from .celery_worker import log, task_get, task_set, task_delete
 
 
 # класс модели данных Pydantic
-class Task(BaseModel):
-    key: str
-    value: str = None
+# class Task(BaseModel):
+#     key: str
+#     value: str = None
 
 
 # теги
@@ -63,20 +63,20 @@ app = FastAPI(
 #     log.warning(task.get(on_message=celery_on_message, propagate=False))
 #
 #
-# @app.get("/get/{word}")
-# async def get(word: str, background_task: BackgroundTasks):
-#     """
-#     Get.
-#     :param word:
-#     :param background_task:
-#     :return:
-#     """
-#     task = celery_app.send_task("app.celery_worker.test_celery", args=[word])
-#     print(task)
-#     background_task.add_task(background_on_message, task)
-#     return {"message": "Word received"}
-#
-#
+@app.get("/get/{key}")
+async def get(key):
+    """
+    Get.
+    :param key:
+    :return:
+    """
+    task = task_get.delay(key)
+    res = task.get()
+    log.warning('main.get RUN')
+    print(res)
+    return res
+
+
 # @app.post("/post")
 # async def post():
 #     pass
@@ -93,15 +93,15 @@ app = FastAPI(
 #                                       {"request": request, "message": "Hello, world"})
 
 
-@app.get("/tasks/{task_id}")
-def get_status(task_id):
-    task_result = AsyncResult(task_id)
-    result = {
-        "task_id": task_id,
-        "task_status": task_result.status,
-        "task_result": task_result.result
-    }
-    return JSONResponse(result)
+# @app.get("/tasks/{task_id}")
+# def get_status(task_id):
+#     task_result = AsyncResult(task_id)
+#     result = {
+#         "task_id": task_id,
+#         "task_status": task_result.status,
+#         "task_result": task_result.result
+#     }
+#     return JSONResponse(result)
 
 
 # @app.get('/get_data/{key}', response_class=JSONResponse, tags=["get"])

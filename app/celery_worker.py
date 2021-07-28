@@ -3,39 +3,7 @@ import logging.config
 import redis
 import json
 
-CELERYD_HIJACK_ROOT_LOGGER = False
-
-# настройка логирования:
-log_config = {
-    'version': 1,
-    'formatters': {
-        'basic': {
-            'format': '%(asctime)s - %(filename)s - %(funcName)s - %(levelname)s - %(message)s',
-            'datefmt': '%d-%b-%y %H:%M:%S'
-        }
-    },
-    'handlers': {
-        'file_handler': {
-            'class': 'logging.FileHandler',
-            'formatter': 'basic',
-            'filename': 'app.log',
-            'mode': 'w',
-        },
-    },
-    'loggers': {
-        '': {
-            'level': 'NOTSET',
-            'handlers': ['file_handler']
-        }
-    }
-}
-
-logging.config.dictConfig(log_config)
 log = logging.getLogger(__name__)
-
-# настройка Celery:
-# celery_app = Celery('app')
-# celery_app.config_from_object('celeryconfig')
 
 _password = 'wX4do7Xscne6KJFSD7Shu3xJx3Pn2MxC1JJaQVaVzpxePC'
 _host = 'localhost'
@@ -47,28 +15,34 @@ celery_app = Celery('app', broker=broker_url, backend=result_backend)
 r = redis.Redis(db=0, host=_host, port=_port, password=_password)
 
 
-@celery_app.task
+@celery_app.task(name="task_get")
 def task_get(key):
     assert type(key) == bytes or type(key) == str or type(key) == int or type(key) == float, 'WRONG KEY TYPE'
-    log.warning('task.task_get')
+    log.warning('task.task_get RUN')
     val = json.loads(r.get(key))
-    return {key: val}
+    # print(val)
+    return json.dumps({key: val})
 
 
-@celery_app.task(name="add_task")
+@celery_app.task(name="task_set")
 def task_set(key, value):
     assert type(key) == bytes or type(key) == str or type(key) == int or type(key) == float, 'WRONG KEY TYPE'
-    log.warning('task.task_set')
+    log.warning('task.task_set RUN')
     r.set(key, json.dumps(value))
-    return {key: value}
+    return json.dumps({key: value})
 
 
-@celery_app.task
+@celery_app.task(name="task_delete")
 def task_delete(key):
     assert type(key) == bytes or type(key) == str or type(key) == int or type(key) == float, 'WRONG KEY TYPE'
-    log.warning('task.task_delete')
-    r.delete(key)
-    return True
+    log.warning('task.task_delete RUN')
+    val = r.get(key)
+    if val:
+        r.delete(key)
+        return True
+    else:
+        log.error(f'task.task_delete THERE IS NO VALUE WITH KEY = {key}')
+        return False
 
 
 if __name__ == '__main__':

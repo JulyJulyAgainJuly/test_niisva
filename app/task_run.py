@@ -8,9 +8,9 @@ from celery_worker import task_get, task_set, task_delete
 # print(res.state)
 
 task = task_set.delay(key='key1', value='srvvsfgj123456789')
-print(task.id)
+# print(task.id)
 print(task.get())
-task = task_delete.delay(key='key1')
+task = task_delete.delay(key='key')
 # task = task_get.delay(key='key1')
 print(task.get())
 # task.forget()
