@@ -6,13 +6,14 @@ import uvicorn
 Python 3.8.10
 
 В одном терминале запускаем сервер Редис:
-    redis-server test_niisva/redis.conf
+    redis-server PycharmProjects/test_niisva/redis.conf
 Во втором терминале запускаем celery:
     celery -A task worker -l INFO
     celery -A task worker -l INFO --logfile=task.log
 
     или
     python app/celery_worker.py
+    ! После запуска воркер первым делом чистит базу-бэкенд Редис !
 В третьем терминале запускаем manage.py:
     python manage.py
 

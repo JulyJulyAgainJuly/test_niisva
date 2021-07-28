@@ -1,4 +1,4 @@
-from celery_f.result import AsyncResult
+from celery.result import AsyncResult
 from fastapi import FastAPI
 # , Form, Request
 from fastapi.responses import JSONResponse

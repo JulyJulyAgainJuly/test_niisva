@@ -2,6 +2,7 @@ import logging.config
 import redis
 from celery import Celery
 from uuid import uuid4
+import json
 
 
 CELERYD_HIJACK_ROOT_LOGGER = False
@@ -47,7 +48,7 @@ r = redis.Redis(db=0, host=_host, port=_port, password=_password)
 @app.task()
 def get_(somekey):
     log.warning(f'Getting {somekey}')
-    val = r.get(somekey)
+    val = json.loads(r.get(somekey))
     print(val)
     return str(val)
 
