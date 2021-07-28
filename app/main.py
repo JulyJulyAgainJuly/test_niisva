@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from .celery_worker import log, task_get, task_set, task_delete
 
 
-# теги
 tags_metadata = [
     {
         'name': 'add',
@@ -23,7 +22,7 @@ tags_metadata = [
     }
 ]
 
-# инициализация
+
 app = FastAPI(
     title='API',
     description='API for Redis (+ Celery).'
