@@ -1,7 +1,6 @@
 from celery import Celery
 import logging
 import redis
-import json
 
 log = logging.getLogger(__name__)
 
@@ -21,12 +20,9 @@ r = redis.Redis(db=0, host=_host, port=_port, password=_password)
 def task_get(key):
     assert type(key) == bytes or type(key) == str or type(key) == int or type(key) == float, 'WRONG KEY TYPE'
     log.warning('task.task_get RUN')
-    print(f'key={key}')
-    val = r.get(key)
+    val = r.get(key).decode("utf-8")
     if val:
-        val = json.loads(val)
-        # print(val)
-        return json.dumps({key: val})
+        return {key: val}
     else:
         log.error(f'task.task_get THERE IS NO VALUE WITH KEY = {key}')
         return False
@@ -37,12 +33,11 @@ def task_set(key, value):
     assert type(key) == bytes or type(key) == str or type(key) == int or type(key) == float, 'WRONG KEY TYPE'
     log.warning('task.task_set RUN')
     r.set(key, value)
-    val = r.get(key)
+    val = r.get(key).decode("utf-8")
     if val:
-        val = json.loads(val)
-        return json.dumps({key: value})
+        return {key: val}
     else:
-        log.error(f'task.task_set SOMETHING WENT WRONG')
+        log.error(f'task.task_set IMPUT ERROR')
         return False
 
 
@@ -50,10 +45,10 @@ def task_set(key, value):
 def task_delete(key):
     assert type(key) == bytes or type(key) == str or type(key) == int or type(key) == float, 'WRONG KEY TYPE'
     log.warning('task.task_delete RUN')
-    val = r.get(key)
+    val = r.get(key).decode("utf-8")
     if val:
         r.delete(key)
-        return True
+        return 'OK'
     else:
         log.error(f'task.task_delete THERE IS NO VALUE WITH KEY = {key}')
         return False

@@ -1,31 +1,25 @@
-from celery.result import AsyncResult
 from fastapi import FastAPI
-# , Form, Request
-from fastapi.responses import JSONResponse
-# , PlainTextResponse
-# from fastapi.staticfiles import StaticFiles
-# from fastapi.templating import Jinja2Templates
-# from pydantic import BaseModel
-import json
 
 from .celery_worker import log, task_get, task_set, task_delete
-
-
-# класс модели данных Pydantic
-# class Task(BaseModel):
-#     key: str
-#     value: str = None
 
 
 # теги
 tags_metadata = [
     {
-        'name': 'get',
-        'description': 'Get data from Redis DB.',
+        'name': 'add',
+        'description': 'Добавить запись в базу',
     },
     {
-        'name': 'post',
-        'description': 'Put/Change/Delete data in Redis DB.',
+        'name': 'get',
+        'description': 'Получить запись из базы',
+    },
+    {
+        'name': 'update',
+        'description': 'Изменить запись в базе',
+    },
+    {
+        'name': 'get',
+        'description': 'Получить запись из базы',
     }
 ]
 
@@ -37,31 +31,6 @@ app = FastAPI(
     openapi_tags=tags_metadata
 )
 
-# монтирование статической папки для обслуживания статических файлов
-# app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# экземпляр шаблона Jinja2 для возврата веб-страниц через шаблонизатор
-# templates = Jinja2Templates(directory="templates")
-
-
-# @app.post('/get_task')
-# def send_task():
-#     logging_task.delay()
-# req = request.json()
-# try:
-#     int(req["n1"])
-# except TypeError:
-#     return {"status": 1, "message": Wrong type}
-# # We use celery_f delay method in order to enqueue the task with the given parameters
-# add.delay(n1, n2)
-
-# def celery_on_message(body):
-#     log.warning(body)
-#
-#
-# def background_on_message(task):
-#     log.warning(task.get(on_message=celery_on_message, propagate=False))
-
 
 @app.get("/add")
 async def add(key, value):
@@ -70,16 +39,13 @@ async def add(key, value):
     :param key:
     :return:
     """
-    print(f'key={key}')
-    print(f'value={value}')
+    log.warning('main.add RUN')
     task = task_set.delay(key=key, value=value)
     res = task.get()
     if res:
-        log.warning('main.add RUN')
         # print(res)
         return res
-    else:
-        return {'msg': 'SOMETHING WENT WRONG'}
+    return {'msg': 'SOMETHING WRONG WITH task_set'}
 
 
 @app.get("/get")
@@ -89,108 +55,43 @@ async def get(key):
     :param key:
     :return:
     """
+    log.warning('main.get RUN')
     task = task_get.delay(key=key)
     res = task.get()
     if res:
-        log.warning('main.get RUN')
-        # print(res)
-        return json.dumps({key: json.loads(res)})
-    else:
-        return {'msg': 'NO VALUE'}
+        return res
+    return {'msg': 'SOMETHING WRONG WITH task_get'}
 
 
-# @app.post("/post")
-# async def post():
-#     pass
+@app.get("/update")
+async def update(key, value):
+    """
+    Get.
+    :param key:
+    :return:
+    """
+    log.warning('main.update RUN')
+    task = task_get.delay(key=key)
+    res = task.get()
+    if res:
+        task = task_set.delay(key=key, value=value)
+        res = task.get()
+        if res:
+            return res
+        return {'msg': 'SOMETHING WRONG WITH task_set'}
+    return {'msg': f'main.update THERE IS NO VALUE WITH KEY = {key}'}
 
 
-# @app.get("/", response_class=PlainTextResponse)
-# async def hello():
-#     return "Hello World!"
-
-
-# @app.get("/", response_class=HTMLResponse)
-# async def hello(request: Request):
-#     return templates.TemplateResponse("index.html",
-#                                       {"request": request, "message": "Hello, world"})
-
-
-# @app.get("/tasks/{task_id}")
-# def get_status(task_id):
-#     task_result = AsyncResult(task_id)
-#     result = {
-#         "task_id": task_id,
-#         "task_status": task_result.status,
-#         "task_result": task_result.result
-#     }
-#     return JSONResponse(result)
-
-
-# @app.get('/get_data/{key}', response_class=JSONResponse, tags=["get"])
-# async def show_data_in_json(key=None):
-#     if key:
-#         task = get_data("app.celery_worker.get_data", args=[key])
-#         log.warning('Get for key')
-#     else:
-#         task = get_all("app.celery_worker.get_all")
-#         log.warning('Get all')
-#     print(task)
-#     return json.dumps({"status": "200", "message": "OK"})
-#
-#
-# @app.post('/post_data', response_class=JSONResponse, tags=["post"])
-# async def set_data_to_db(key=None, value=None):
-#     if key & value:
-#         task = update_data("app.celery_worker.update_data", args=[value])
-#         log.warning('Update existing data in DB')
-#     elif not key & value:
-#         task = set_data("app.celery_worker.set_data", args=[key, value])
-#         log.warning('Set new data to DB')
-#     elif not value & key:
-#         task = delete_data("app.celery_worker.delete_data", args=[key])
-#         log.warning('Deleting existing data from DB')
-#     else:
-#         log.error('WRONG PARAMETERS')
-#         return {"message": "ERROR. Wrong parameters"}
-#     print(task)
-#     return json.dumps({"status": "200", "message": "OK"})
-
-
-# @app.get('/get_all_data', response_class=JSONResponse, tags=["get_all_data"])
-# async def show_everything():
-#     task = get_all("app.celery_worker.get_all")
-#     log.warning('')
-#     print(task)
-#     return {"status": "200", "message": "OK"}
-#
-#
-# @app.get('/get_data', response_class=JSONResponse, tags=["get_data"])
-# async def show_data_for_key(key):
-#     task = get_data("app.celery_worker.get_data")
-#     log.warning('')
-#     print(task)
-#     return {"status": "200", "message": "OK"}
-#
-#
-# @app.get('/set_data', response_class=JSONResponse, tags=["set_data"])
-# async def input_new_data(key, value):
-#     task = set_data("app.celery_worker.set_data", args=[key, value])
-#     log.warning('UPDATE')
-#     print(task)
-#     return {"status": "200", "message": "OK"}
-#
-#
-# @app.get('/update_data', response_class=JSONResponse, tags=["update_data"])
-# async def update_data_for_key(key, value):
-#     task = update_data("app.celery_worker.update_data", args=[key, value])
-#     log.warning('')
-#     print(task)
-#     return {"status": "200", "message": "OK"}
-#
-#
-# @app.get('/delete_data', response_class=JSONResponse, tags=["delete_data"])
-# async def delete_data_for_key(key):
-#     task = delete_data("app.celery_worker.delete_data", args=[key])
-#     log.warning('')
-#     print(task)
-#     return {"status": "200", "message": "OK"}
+@app.get("/delete")
+async def delete(key):
+    """
+    Get.
+    :param key:
+    :return:
+    """
+    log.warning('main.delete RUN')
+    task = task_delete.delay(key=key)
+    res = task.get()
+    if res:
+        return res
+    return {'msg': 'SOMETHING WRONG WITH task_delete'}
